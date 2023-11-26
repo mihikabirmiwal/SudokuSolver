@@ -94,16 +94,17 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-
-    for (const auto& testCase : testCases) {
-        for (const auto& row : testCase) {
-            for (const auto& element : row) {
-                printf("%d ", element);
-            }
-            printf("\n");
-        }
-        printf("-----------\n"); // Add a separator between 2D arrays
-    }
+    // testing print
+    // for (const auto& testCase : testCases) {
+    //     print(testCase);
+    // }
+    printf("BEFORE SOLVING\n");
+    print(testCases[0]);
+    array<array<vector<int>, 9>, 9> allOptions = getOptions(testCases[0]);
+    reduceOptions(allOptions, testCases[0]);
+    bool x = pureBacktracking(testCases[0], allOptions);
+    printf("AFTER SOLVING\n");
+    print(testCases[0]);
 
 
     // if(algorithm==Algorithms.BACKTRACKING) {
