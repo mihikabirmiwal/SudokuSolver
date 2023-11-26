@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    printf("Args read are:\nalgorithm = %d\ninput_file = %s\noutput_file = %s\n", algorithm, inputFilePath, outputFilePath);
+    printf("\nArgs read are:\nalgorithm = %d\ninput_file = %s\noutput_file = %s\n\n", algorithm, inputFilePath, outputFilePath);
 
     // open input file
     ifstream input_file(inputFilePath);
@@ -69,30 +69,45 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-    // TODO read the file, create test cases
+    // read input file and store sudokus
     vector<array<array<int, 9>, 9>> testCases;
 
-    char* line;
-    chat c;
-    int index = 0;
+    char next_char = input_file.peek();
+    char c;
 
-    while (getline(input_file, line)) {
-        if (strncmp(line, "Grid", 4) == 0) {
-            input_file.get(c); // newline character
+    while (next_char != EOF) {
+        if (next_char == 'G') {
+            string line;
+            getline(input_file, line);
+        } else {
+            array<array<int, 9>, 9> currSudoku;
             for (int row = 0; row < 9; row++){
                 for (int col = 0; col < 9; col++){
                     input_file.get(c);
-                    int i = stoi(c);
-                    testCases[index][row][col] = i;
+                    int i = int(c - '0');
+                    currSudoku[row][col] = i;
                 }
                 input_file.get(c); // newline character
             }
+            testCases.push_back(currSudoku);
         }
+        next_char = input_file.peek();
     }
 
 
-    if(algorithm==Algorithms.BACKTRACKING) {
+    for (const auto& testCase : testCases) {
+        for (const auto& row : testCase) {
+            for (const auto& element : row) {
+                printf("%d ", element);
+            }
+            printf("\n");
+        }
+        printf("-----------\n"); // Add a separator between 2D arrays
+    }
+
+
+    // if(algorithm==Algorithms.BACKTRACKING) {
         
-    }
+    // }
     
 }
