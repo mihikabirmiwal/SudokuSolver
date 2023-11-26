@@ -30,7 +30,7 @@ array<array<vector<int>, 9>, 9> getOptions(const array<array<int, 9>, 9>& grid) 
     return options;
 }
 
-void reduceOptions(array<array<vector<int>, 9>, 9> options, const array<array<int, 9>, 9>& grid) {
+void reduceOptionsElimination(array<array<vector<int>, 9>, 9> options, const array<array<int, 9>, 9>& grid) {
     for(int r=0;r<9;r++) {
         for(int c=0;c<9;c++) {
             // TODO can add multithreading at this level
