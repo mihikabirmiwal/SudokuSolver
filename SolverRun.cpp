@@ -15,16 +15,6 @@ enum Algorithms {
     ALL
 };
 
-void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
-    for (const auto& vec : testCase) {
-        for (int value : vec) {
-            std::cout << value << " ";
-        }
-        std::cout << "\t\t";  // Two tabs between vectors
-    }
-    std::cout << "\n";
-}
-
 int main(int argc, char **argv) {
     
     // ARGUMENT PARSING
@@ -105,7 +95,6 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-
     // testing reduceOptionsTwins
     // printf("TESTING REDUCE OPTIONS TWINS\n");
     // printf("BEFORE:\n");
@@ -115,21 +104,22 @@ int main(int argc, char **argv) {
     // printTestCase(test_case1);
     
     for (auto& testCase : testCases) {
-        // printf("BEFORE SOLVING\n");
-        // printBoard(testCase);
-        // array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        // // printOptions(allOptions);
-        // reduceOptionsElimination(allOptions, testCase);
-        // // printOptions(allOptions);
-        // reduceOptionsLoneRanger(allOptions);
-        // // printOptions(allOptions);
-        // bool x = pureBacktracking(testCase, allOptions);
-        // printf("AFTER SOLVING\n");
-        // printBoard(testCase);
+        printf("BEFORE SOLVING\n");
+        printBoard(testCase);
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        // printOptions(allOptions);
+        reduceOptionsElimination(allOptions, testCase);
+        // printOptions(allOptions);
+        reduceOptionsLoneRanger(allOptions);
+        // printOptions(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+        printf("AFTER SOLVING\n");
+        printBoard(testCase);
 
 
-        testingTwins(testCase);
+        // testingTwins(testCase);
+
         // just to do the first one
-        // break;
+        break;
     }    
 }
