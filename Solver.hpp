@@ -20,53 +20,69 @@ array<array<vector<int>, 9>, 9> getOptions(const array<array<int, 9>, 9>& grid) 
     return options;
 }
 
-void reduceOptionsEliminationHelper(vector<int>& option, const array<array<int, 9>, 9>& grid, int r, int c) {
-    if(grid[r][c]==0) {
-        // check row
-        for(int i=0;i<9;i++) {
-            // number to remove
-            int num = grid[r][i];
-            // index of number to remove
-            auto numInd = find(option.begin(), option.end(), num);
-            // remove if value was found
-            if(numInd != option.end()) option.erase(numInd);
-            
-        }
-
-        // check col
-        for(int i=0;i<9;i++) {
-            // number to remove
-            int num = grid[i][c];
-            // index of number to remove
-            auto numInd = find(option.begin(), option.end(), num);
-            // remove if value was found
-            if(numInd != option.end()) option.erase(numInd);
-        }
-
-        // check small square
-        int startRow = r - r%3;
-        int startCol = c - c%3;
-        for(int i=0;i<3;i++) {
-            for(int j=0;j<3;j++) {
+void reduceOptionsEliminationHelper(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid, int start, int end) {
+    for(int j=start;j<end;j++) {
+        int r = j/9;
+        int c = j%9;
+        vector<int>& option = options[r][c];
+        if(grid[r][c]==0) {
+            // check row
+            for(int i=0;i<9;i++) {
                 // number to remove
-                int num = grid[startRow+i][startCol+j];
+                int num = grid[r][i];
+                // index of number to remove
+                auto numInd = find(option.begin(), option.end(), num);
+                // remove if value was found
+                if(numInd != option.end()) option.erase(numInd);
+                
+            }
+
+            // check col
+            for(int i=0;i<9;i++) {
+                // number to remove
+                int num = grid[i][c];
                 // index of number to remove
                 auto numInd = find(option.begin(), option.end(), num);
                 // remove if value was found
                 if(numInd != option.end()) option.erase(numInd);
             }
+
+            // check small square
+            int startRow = r - r%3;
+            int startCol = c - c%3;
+            for(int i=0;i<3;i++) {
+                for(int j=0;j<3;j++) {
+                    // number to remove
+                    int num = grid[startRow+i][startCol+j];
+                    // index of number to remove
+                    auto numInd = find(option.begin(), option.end(), num);
+                    // remove if value was found
+                    if(numInd != option.end()) option.erase(numInd);
+                }
+            }
         }
     }
 }
 
-void reduceOptionsElimination(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid) {
-    for(int r=0;r<9;r++) {
-        for(int c=0;c<9;c++) {
-            // TODO can add multithreading at this level
-            // only need to reduce options for empty spots
-            reduceOptionsEliminationHelper(options[r][c], grid, r, c);
+void reduceOptionsElimination(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid, int numThreads) {
+    // pthread_t threads[numThreads];
+    if(numThreads>81) numThreads = 81;
+    int expectedLoad = 81/numThreads;
+    int extraLoad = 81%numThreads;
+    int startCalc = 0;
+    for(int i=0;i<numThreads;i++) {
+        int endCalc = startCalc+expectedLoad;
+        if(extraLoad>0) {
+            endCalc++;
+            extraLoad--;
         }
+        reduceOptionsEliminationHelper(options, grid, startCalc, endCalc);
+        startCalc = endCalc;
     }
+    // // wait on all threads to finish
+    // for(int i=0;i<numThreads;i++) {
+    //     pthread_join(threads[i], NULL);
+    // }
 }
 
 void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {

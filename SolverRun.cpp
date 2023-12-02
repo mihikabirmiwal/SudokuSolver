@@ -43,9 +43,10 @@ int main(int argc, char **argv) {
     int algorithm = 0;
     char* inputFilePath;
     char* outputFilePath;
+    int numThreads = 1;
 
     int opt = 0;
-    while ((opt = getopt(argc, argv, "a:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "a:i:o:t:")) != -1) {
         switch (opt) {
             case 'a':
                 algorithm = stoi(optarg);
@@ -58,13 +59,17 @@ int main(int argc, char **argv) {
             case 'o':
                 outputFilePath = optarg;
                 break;
+
+            case 't':
+                numThreads = stoi(optarg);
+                break;
             
             default:
                 break;
         }
     }
 
-    printf("\nArgs read are:\nalgorithm = %d\ninput_file = %s\noutput_file = %s\n\n", algorithm, inputFilePath, outputFilePath);
+    printf("\nArgs read are:\nalgorithm = %d\ninput_file = %s\noutput_file = %s\nnumThreads=%d\n\n", algorithm, inputFilePath, outputFilePath, numThreads);
 
     // open input file
     ifstream input_file(inputFilePath);
@@ -119,7 +124,7 @@ int main(int argc, char **argv) {
         printBoard(testCase);
         array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
         printOptions(allOptions);
-        reduceOptionsElimination(allOptions, testCase);
+        reduceOptionsElimination(allOptions, testCase, numThreads);
         printOptions(allOptions);
         reduceOptionsLoneRanger(allOptions);
         printOptions(allOptions);
