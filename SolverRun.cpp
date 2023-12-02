@@ -104,6 +104,15 @@ int main(int argc, char **argv) {
         }
         next_char = input_file.peek();
     }
+
+
+    // testing reduceOptionsTwins
+    // printf("TESTING REDUCE OPTIONS TWINS\n");
+    // printf("BEFORE:\n");
+    // printTestCase(test_case1);
+    // reduceOptionsTwins(test_case1);
+    // printf("AFTER:\n");
+    // printTestCase(test_case1);
     
     for (auto& testCase : testCases) {
         // printf("BEFORE SOLVING\n");

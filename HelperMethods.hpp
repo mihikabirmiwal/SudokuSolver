@@ -108,3 +108,28 @@ void testingTwins(array<array<int, 9>, 9>& testCase) {
     printf("After elimination + twins + backtracking:\n");
     printBoard(secondRun);
 }
+
+array<vector<int>, 9> twinsTester() {
+    array<vector<int>, 9> test_case1;
+    vector<int> square1 = {1, 2, 8};
+    vector<int> square2 = {3};
+    vector<int> square3 = {1, 4};
+    vector<int> square4 = {5, 7, 8};
+    vector<int> square5 = {6};
+    vector<int> square6 = {4, 5, 7};
+    vector<int> square7 = {1, 2, 8};
+    vector<int> square8 = {9};
+    vector<int> square9 = {1, 2};
+
+    test_case1[0] = square1;
+    test_case1[1] = square2;
+    test_case1[2] = square3;
+    test_case1[3] = square4;
+    test_case1[4] = square5;
+    test_case1[5] = square6;
+    test_case1[6] = square7;
+    test_case1[7] = square8;
+    test_case1[8] = square9;
+
+    return test_case1;
+}
