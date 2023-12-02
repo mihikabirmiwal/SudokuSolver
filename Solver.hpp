@@ -1,6 +1,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 
@@ -73,6 +74,99 @@ void reduceOptionsElimination(array<array<vector<int>, 9>, 9> options, const arr
                 }
             }
         }
+    }
+}
+
+array<vector<int>, 9> loneRangerTester() {
+    array<vector<int>, 9> ret;
+    ret[0].push_back(1);
+    ret[0].push_back(2);
+
+    ret[1].push_back(3);
+
+    ret[2].push_back(3);
+    ret[2].push_back(4);
+
+    ret[3].push_back(1);
+    ret[3].push_back(2);
+    ret[3].push_back(5);
+
+    ret[4].push_back(6);
+
+    ret[5].push_back(5);
+    ret[5].push_back(6);
+    ret[5].push_back(7);
+
+    ret[6].push_back(8);
+    ret[6].push_back(9);
+
+    ret[7].push_back(8);
+    ret[7].push_back(9);
+    ret[7].push_back(1);
+
+    ret[8].push_back(2);
+    return ret;
+}
+
+void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
+    // initialize hashmap
+    std::unordered_map<int, vector<int>> found;
+    for(int i=1;i<=9;i++) {
+        found[i] = {};
+    }
+    // populate hashmap
+    for(int index=0;index<9;index++) {
+        vector<int> currSqOptions = options[index];
+        for(int option: currSqOptions) {
+            found[option].push_back(index);
+        }
+    }
+    // check if any of the values has a vector of length 1
+    for (auto& pair : found) {
+        if(pair.second.size()==1) {
+            // is a lone ranger!
+            int value = pair.first;
+            int index = pair.second[0];
+            cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
+            options[index].clear();
+            options[index].push_back(value);
+            cout << "after clearing\n";
+            for(auto option: options[index]) {
+                cout << option << " ";
+            }
+            cout << "\n";
+        }
+    }
+}
+
+void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9> options) {
+    // all rows
+    for(int row=0;row<9;row++) {
+        reduceOptionsLoneRanger(options[row]);
+    }
+    // all cols
+    for(int col=0;col<9;col++) {
+        array<vector<int>, 9> myArr;
+        for(int r=0;r<9;r++) {
+            myArr[r] = options[r][col];
+        }
+        reduceOptionsLoneRanger(myArr);
+    }
+    // all subsquares
+    for(int sq=0;sq<9;sq++) {
+        array<vector<int>, 9> myArr;
+        int startRow = sq/3;
+        int startCol = sq%3;
+        startRow *= 3;
+        startCol *= 3;
+        int index = 0;
+        for(int r=0;r<3;r++) {
+            for(int c=0;c<3;c++) {
+                myArr[index] = options[startRow+r][startCol+c];
+                index++;
+            }
+        }
+        reduceOptionsLoneRanger(myArr);
     }
 }
 

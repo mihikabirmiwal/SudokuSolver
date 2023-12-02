@@ -94,14 +94,22 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-    for (auto& testCase : testCases) {
-        printf("BEFORE SOLVING\n");
-        print(testCase);
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        reduceOptionsElimination(allOptions, testCase);
-        bool x = pureBacktracking(testCase, allOptions);
-        printf("AFTER SOLVING\n");
-        print(testCase);
+    // for (auto& testCase : testCases) {
+    //     printf("BEFORE SOLVING\n");
+    //     print(testCase);
+    //     array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+    //     reduceOptionsElimination(allOptions, testCase);
+    //     bool x = pureBacktracking(testCase, allOptions);
+    //     printf("AFTER SOLVING\n");
+    //     print(testCase);
+    // }
+
+    array<vector<int>, 9> loneRangerTest = loneRangerTester();
+    reduceOptionsLoneRanger(loneRangerTest);
+    cout << "reduce options call complete\n";
+    for(int i=0;i<9;i++) {
+        for (int value : loneRangerTest[i]) cout << value << " ";
+        cout << "\n";
     }
     
 }
