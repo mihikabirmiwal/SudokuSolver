@@ -138,6 +138,36 @@ void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
         }
     }
 }
+void reduceOptionsTwins(array<vector<int>, 9> optionsForGroup) {
+    array<unordered_map<int, vector<int>>, 9> optionsAvailable;
+    for (int i = 0; i < 9; i++) { // iterate through each square
+        if (optionsForGroup[i].size() > 1) {
+            for (int j = 0; j < optionsForGroup[i].size(); j++) { // iterate through each option per square
+                for (int k = i + 1; k < 9; j++) { // iterate over the rest of squares
+                    int curr_option = optionsForGroup[i][j];
+                    auto found = find(optionsForGroup[k].begin(), optionsForGroup[k].end(), curr_option);
+                    if (found != optionsForGroup[k].end()) {
+                        vector<int> listOfSquaresCurr;
+                        vector<int> listOfSquaresMatch;
+                        try {
+                            listOfSquaresCurr = optionsAvailable[i].at(curr_option);
+                        } catch (const std::out_of_range& e) {}   
+                        try {
+                            listOfSquaresMatch = optionsAvailable[k].at(curr_option);
+                        } catch (const std::out_of_range& e) {}   
+                        listOfSquaresCurr.push_back(k);
+                        listOfSquaresMatch.push_back(i);
+                        optionsAvailable[i].at(curr_option) = listOfSquaresCurr;
+                        optionsAvailable[k].at(curr_option) = listOfSquaresMatch;
+                    }
+                }
+            }
+            // NOTES: ya esta la iteration para crear todos los hashmaps con las opciones
+            // de distintos cuadros donde se repite la opcion. Lo que falta (TODO:) es hacer
+            // el check y descartar los cuadrados que no cumplen los requisitos para twins
+        }
+    }
+}
 
 void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9> options) {
     // all rows
