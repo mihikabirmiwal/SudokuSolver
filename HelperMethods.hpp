@@ -28,6 +28,32 @@ void printOptions(const array<array<vector<int>, 9>, 9>& options) {
     printf("-----------\n");
 }
 
+// void printOptionsInSquares(const std::unordered_map<int, std::vector<int>>& optionsInSquares) {
+//     for (const auto& pair : optionsInSquares) {
+//         std::cout << pair.first << "=";
+
+//         // Print vector elements separated by commas
+//         for (size_t i = 0; i < pair.second.size(); ++i) {
+//             std::cout << pair.second[i];
+//             if (i < pair.second.size() - 1) {
+//                 std::cout << ",";
+//             }
+//         }
+
+//         std::cout << "\n";
+//     }
+// }
+
+void printOptionsPerGrouping(const array<vector<int>, 9>& optionsForAll) {
+    for (size_t i = 0; i < optionsForAll.size(); ++i) {
+        std::cout << "Square " << i + 1 << ": ";
+        for (const int& value : optionsForAll[i]) {
+            std::cout << value << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
 // TESTING FUNCTIONS
 
 array<vector<int>, 9> loneRangerTester() {
@@ -59,4 +85,26 @@ array<vector<int>, 9> loneRangerTester() {
 
     ret[8].push_back(2);
     return ret;
+}
+
+
+void testingTwins(array<array<int, 9>, 9>& testCase) {
+    printf("\n\n~~~~~~~~~~~~~~~~~~\n");
+    array<std::array<int, 9>, 9> firstRun = testCase;
+    printf("TESTING TWINS:\n\n");
+    printf("Original:\n");
+    printBoard(firstRun);
+    array<array<vector<int>, 9>, 9> allOptions = getOptions(firstRun);
+    reduceOptionsElimination(allOptions, firstRun);
+    bool x = pureBacktracking(firstRun, allOptions);
+    printf("After elimination + backtracking:\n");
+    printBoard(firstRun);
+
+    array<std::array<int, 9>, 9> secondRun = testCase;
+    allOptions = getOptions(secondRun);
+    reduceOptionsElimination(allOptions, secondRun);
+    reduceOptionsTwins(allOptions);
+    x = pureBacktracking(secondRun, allOptions);
+    printf("After elimination + twins + backtracking:\n");
+    printBoard(secondRun);
 }

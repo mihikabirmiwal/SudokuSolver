@@ -85,7 +85,7 @@ void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
             // is a lone ranger!
             int value = pair.first;
             int index = pair.second[0];
-            cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
+            // cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
             options[index].clear();
             options[index].push_back(value);
         }
@@ -123,22 +123,6 @@ void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9>& options) {
     }
 }
 
-void printOptionsInSquares(const std::unordered_map<int, std::vector<int>>& optionsInSquares) {
-    for (const auto& pair : optionsInSquares) {
-        std::cout << pair.first << "=";
-
-        // Print vector elements separated by commas
-        for (size_t i = 0; i < pair.second.size(); ++i) {
-            std::cout << pair.second[i];
-            if (i < pair.second.size() - 1) {
-                std::cout << ",";
-            }
-        }
-
-        std::cout << "\n";
-    }
-}
-
 void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
     // initialize map
     unordered_map<int, vector<int>> optionsInSquares;
@@ -154,9 +138,6 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         }
     }
 
-    // printf("---->After populating:\n");
-    // printOptionsInSquares(optionsInSquares);
-
     // only keep options that are present in exactly 2 squares
     auto pair = optionsInSquares.begin();
     while (pair != optionsInSquares.end()){
@@ -167,28 +148,19 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         }
     }
 
-    // printf("---->After reducing based on size:\n");
-    // printOptionsInSquares(optionsInSquares);
-
-
     // check for twins
     auto currPair = optionsInSquares.begin();
     auto nextPair = optionsInSquares.begin();
-    ++nextPair;
+    if (nextPair != optionsInSquares.end()) {
+        ++nextPair;
+    }
     while (currPair != optionsInSquares.end() && nextPair != optionsInSquares.end()){
-        // cout << "\n";
-
         while (nextPair != optionsInSquares.end() && currPair != nextPair){
-            // std::cout << "currPair = Key: " << currPair->first << ", ";
-            // std::cout << "nextPair = Key: " << nextPair->first << "\n";
             if(currPair->second == nextPair->second){
-
+                printf("--->found twins!\n");
                 int squareIndex1 = currPair->second.front();
                 int squareIndex2 = currPair->second.back();
                 vector<int> newOptions = {currPair->first, nextPair->first};
-
-                // printf("---->FOUND A MATCH:\n");
-                // printf("indeces are %d and %d, numbers are %d and %d\n", squareIndex1, squareIndex2, currPair->first, nextPair->first);
                 
                 optionsForAll[squareIndex1] = newOptions;
                 optionsForAll[squareIndex2] = newOptions;
@@ -196,10 +168,42 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
             }
             ++nextPair;
         }
-        // cout << "\n";
-        // std::cout << "Moving on onto next currPair\n";
         ++currPair;
         nextPair = optionsInSquares.begin();
+    }
+}
+
+
+void reduceOptionsTwins(array<array<vector<int>, 9>, 9>& options) {
+    // all rows
+    for(int r = 0; r < 9; r++) {
+        reduceOptionsTwins(options[r]);
+    }
+
+    // all cols
+    for(int c = 0; c < 9; c++) {
+        array<vector<int>, 9> myArr;
+        for(int r = 0; r < 9; r++) {
+            myArr[r] = options[r][c];
+        }
+        reduceOptionsTwins(myArr);
+    }
+
+    // all subsquares
+    for(int sq = 0; sq < 9; sq++) {
+        array<vector<int>, 9> myArr;
+        int startRow = sq/3;
+        int startCol = sq%3;
+        startRow *= 3;
+        startCol *= 3;
+        int index = 0;
+        for(int r = 0; r < 3; r++) {
+            for(int c = 0; c < 3; c++) {
+                myArr[index] = options[startRow+r][startCol+c];
+                index++;
+            }
+        }
+        reduceOptionsTwins(myArr);
     }
 }
 
