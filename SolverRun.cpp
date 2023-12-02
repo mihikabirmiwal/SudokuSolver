@@ -102,20 +102,13 @@ int main(int argc, char **argv) {
         printOptions(allOptions);
         reduceOptionsElimination(allOptions, testCase);
         printOptions(allOptions);
+        reduceOptionsLoneRanger(allOptions);
+        printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
         printf("AFTER SOLVING\n");
         printBoard(testCase);
 
         // just to do the first one
         break;
-    }
-
-    // array<vector<int>, 9> loneRangerTest = loneRangerTester();
-    // reduceOptionsLoneRanger(loneRangerTest);
-    // cout << "reduce options call complete\n";
-    // for(int i=0;i<9;i++) {
-    //     for (int value : loneRangerTest[i]) cout << value << " ";
-    //     cout << "\n";
-    // }
-    
+    }    
 }

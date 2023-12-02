@@ -20,13 +20,13 @@ array<array<vector<int>, 9>, 9> getOptions(const array<array<int, 9>, 9>& grid) 
     return options;
 }
 
-void reduceOptionsElimination(array<array<vector<int>, 9>, 9> options, const array<array<int, 9>, 9>& grid) {
+void reduceOptionsElimination(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid) {
     for(int r=0;r<9;r++) {
         for(int c=0;c<9;c++) {
             // TODO can add multithreading at this level
             // only need to reduce options for empty spots
             if(grid[r][c]==0) {
-                vector<int> option = options[r][c];
+                vector<int>& option = options[r][c];
                 // check row
                 for(int i=0;i<9;i++) {
                     // number to remove
@@ -88,16 +88,11 @@ void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
             cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
             options[index].clear();
             options[index].push_back(value);
-            cout << "after clearing\n";
-            for(auto option: options[index]) {
-                cout << option << " ";
-            }
-            cout << "\n";
         }
     }
 }
 
-void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9> options) {
+void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9>& options) {
     // all rows
     for(int row=0;row<9;row++) {
         reduceOptionsLoneRanger(options[row]);
