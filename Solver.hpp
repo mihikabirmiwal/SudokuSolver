@@ -77,34 +77,85 @@ void reduceOptionsElimination(array<array<vector<int>, 9>, 9> options, const arr
     }
 }
 
-void reduceOptionsTwins(array<vector<int>, 9> optionsForGroup) {
-    array<unordered_map<int, vector<int>>, 9> optionsAvailable;
-    for (int i = 0; i < 9; i++) { // iterate through each square
-        if (optionsForGroup[i].size() > 1) {
-            for (int j = 0; j < optionsForGroup[i].size(); j++) { // iterate through each option per square
-                for (int k = i + 1; k < 9; j++) { // iterate over the rest of squares
-                    int curr_option = optionsForGroup[i][j];
-                    auto found = find(optionsForGroup[k].begin(), optionsForGroup[k].end(), curr_option);
-                    if (found != optionsForGroup[k].end()) {
-                        vector<int> listOfSquaresCurr;
-                        vector<int> listOfSquaresMatch;
-                        try {
-                            listOfSquaresCurr = optionsAvailable[i].at(curr_option);
-                        } catch (const std::out_of_range& e) {}   
-                        try {
-                            listOfSquaresMatch = optionsAvailable[k].at(curr_option);
-                        } catch (const std::out_of_range& e) {}   
-                        listOfSquaresCurr.push_back(k);
-                        listOfSquaresMatch.push_back(i);
-                        optionsAvailable[i].at(curr_option) = listOfSquaresCurr;
-                        optionsAvailable[k].at(curr_option) = listOfSquaresMatch;
-                    }
-                }
+
+void printOptionsInSquares(const std::unordered_map<int, std::vector<int>>& optionsInSquares) {
+    for (const auto& pair : optionsInSquares) {
+        std::cout << pair.first << "=";
+
+        // Print vector elements separated by commas
+        for (size_t i = 0; i < pair.second.size(); ++i) {
+            std::cout << pair.second[i];
+            if (i < pair.second.size() - 1) {
+                std::cout << ",";
             }
-            // NOTES: ya esta la iteration para crear todos los hashmaps con las opciones
-            // de distintos cuadros donde se repite la opcion. Lo que falta (TODO:) es hacer
-            // el check y descartar los cuadrados que no cumplen los requisitos para twins
         }
+
+        std::cout << "\n";
+    }
+}
+
+
+void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
+    // initialize map
+    unordered_map<int, vector<int>> optionsInSquares;
+    for(int i = 1; i <= 9 ; i++) {
+        optionsInSquares[i] = {};
+    }
+
+    // populate map
+    for(int i = 0; i < 9 ; i++) {
+        vector<int> currSqOptions = optionsForAll[i];
+        for(int option: currSqOptions) {
+            optionsInSquares[option].push_back(i);
+        }
+    }
+
+    // printf("---->After populating:\n");
+    // printOptionsInSquares(optionsInSquares);
+
+    // only keep options that are present in exactly 2 squares
+    auto pair = optionsInSquares.begin();
+    while (pair != optionsInSquares.end()){
+        if(pair->second.size() != 2) {
+            pair = optionsInSquares.erase(pair);
+        } else {
+            ++pair;
+        }
+    }
+
+    // printf("---->After reducing based on size:\n");
+    // printOptionsInSquares(optionsInSquares);
+
+
+    // check for twins
+    auto currPair = optionsInSquares.begin();
+    auto nextPair = optionsInSquares.begin();
+    ++nextPair;
+    while (currPair != optionsInSquares.end() && nextPair != optionsInSquares.end()){
+        // cout << "\n";
+
+        while (nextPair != optionsInSquares.end() && currPair != nextPair){
+            // std::cout << "currPair = Key: " << currPair->first << ", ";
+            // std::cout << "nextPair = Key: " << nextPair->first << "\n";
+            if(currPair->second == nextPair->second){
+
+                int squareIndex1 = currPair->second.front();
+                int squareIndex2 = currPair->second.back();
+                vector<int> newOptions = {currPair->first, nextPair->first};
+
+                // printf("---->FOUND A MATCH:\n");
+                // printf("indeces are %d and %d, numbers are %d and %d\n", squareIndex1, squareIndex2, currPair->first, nextPair->first);
+                
+                optionsForAll[squareIndex1] = newOptions;
+                optionsForAll[squareIndex2] = newOptions;
+                break;
+            }
+            ++nextPair;
+        }
+        // cout << "\n";
+        // std::cout << "Moving on onto next currPair\n";
+        ++currPair;
+        nextPair = optionsInSquares.begin();
     }
 }
 

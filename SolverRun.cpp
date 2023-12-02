@@ -14,6 +14,16 @@ enum Algorithms {
     ALL
 };
 
+void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
+    for (const auto& vec : testCase) {
+        for (int value : vec) {
+            std::cout << value << " ";
+        }
+        std::cout << "\t\t";  // Two tabs between vectors
+    }
+    std::cout << "\n";
+}
+
 int main(int argc, char **argv) {
     
     // ARGUMENT PARSING
@@ -94,14 +104,45 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-    for (auto& testCase : testCases) {
-        printf("BEFORE SOLVING\n");
-        print(testCase);
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        reduceOptionsElimination(allOptions, testCase);
-        bool x = pureBacktracking(testCase, allOptions);
-        printf("AFTER SOLVING\n");
-        print(testCase);
-    }
+    // for (auto& testCase : testCases) {
+    //     printf("BEFORE SOLVING\n");
+    //     print(testCase);
+    //     array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+    //     reduceOptionsElimination(allOptions, testCase);
+    //     bool x = pureBacktracking(testCase, allOptions);
+    //     printf("AFTER SOLVING\n");
+    //     print(testCase);
+    // }
+
+    printf("TESTING REDUCE OPTIONS TWINS\n");
+
+
+    // testing reduceOptionsTwins
+    array<vector<int>, 9> test_case1;
+    vector<int> square1 = {1, 2, 8};
+    vector<int> square2 = {3};
+    vector<int> square3 = {1, 4};
+    vector<int> square4 = {5, 7, 8};
+    vector<int> square5 = {6};
+    vector<int> square6 = {4, 5, 7};
+    vector<int> square7 = {1, 2, 8};
+    vector<int> square8 = {9};
+    vector<int> square9 = {1, 2};
+
+    test_case1[0] = square1;
+    test_case1[1] = square2;
+    test_case1[2] = square3;
+    test_case1[3] = square4;
+    test_case1[4] = square5;
+    test_case1[5] = square6;
+    test_case1[6] = square7;
+    test_case1[7] = square8;
+    test_case1[8] = square9;
+
+    printf("BEFORE:\n");
+    printTestCase(test_case1);
+    reduceOptionsTwins(test_case1);
+    printf("AFTER:\n");
+    printTestCase(test_case1);
     
 }
