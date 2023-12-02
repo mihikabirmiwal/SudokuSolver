@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include "Solver.hpp"
+#include "HelperMethods.hpp"
 
 using namespace std;
 
@@ -94,22 +95,27 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-    // for (auto& testCase : testCases) {
-    //     printf("BEFORE SOLVING\n");
-    //     print(testCase);
-    //     array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-    //     reduceOptionsElimination(allOptions, testCase);
-    //     bool x = pureBacktracking(testCase, allOptions);
-    //     printf("AFTER SOLVING\n");
-    //     print(testCase);
-    // }
+    for (auto& testCase : testCases) {
+        printf("BEFORE SOLVING\n");
+        printBoard(testCase);
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        printOptions(allOptions);
+        reduceOptionsElimination(allOptions, testCase);
+        printOptions(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+        printf("AFTER SOLVING\n");
+        printBoard(testCase);
 
-    array<vector<int>, 9> loneRangerTest = loneRangerTester();
-    reduceOptionsLoneRanger(loneRangerTest);
-    cout << "reduce options call complete\n";
-    for(int i=0;i<9;i++) {
-        for (int value : loneRangerTest[i]) cout << value << " ";
-        cout << "\n";
+        // just to do the first one
+        break;
     }
+
+    // array<vector<int>, 9> loneRangerTest = loneRangerTester();
+    // reduceOptionsLoneRanger(loneRangerTest);
+    // cout << "reduce options call complete\n";
+    // for(int i=0;i<9;i++) {
+    //     for (int value : loneRangerTest[i]) cout << value << " ";
+    //     cout << "\n";
+    // }
     
 }

@@ -5,17 +5,6 @@
 
 using namespace std;
 
-void print(const array<array<int, 9>, 9> grid) {
-    for (const auto& row : grid) {
-        for (const auto& element : row) {
-            printf("%d ", element);
-        }
-        printf("\n");
-    }
-    printf("-----------\n"); // Add a separator between 2D arrays
-}
-
-
 // intitialize options, if grid value empty then all options. if already filled in, then 1 option (the value itself)
 array<array<vector<int>, 9>, 9> getOptions(const array<array<int, 9>, 9>& grid) {
     array<array<vector<int>, 9>, 9> options;
@@ -77,37 +66,6 @@ void reduceOptionsElimination(array<array<vector<int>, 9>, 9> options, const arr
     }
 }
 
-array<vector<int>, 9> loneRangerTester() {
-    array<vector<int>, 9> ret;
-    ret[0].push_back(1);
-    ret[0].push_back(2);
-
-    ret[1].push_back(3);
-
-    ret[2].push_back(3);
-    ret[2].push_back(4);
-
-    ret[3].push_back(1);
-    ret[3].push_back(2);
-    ret[3].push_back(5);
-
-    ret[4].push_back(6);
-
-    ret[5].push_back(5);
-    ret[5].push_back(6);
-    ret[5].push_back(7);
-
-    ret[6].push_back(8);
-    ret[6].push_back(9);
-
-    ret[7].push_back(8);
-    ret[7].push_back(9);
-    ret[7].push_back(1);
-
-    ret[8].push_back(2);
-    return ret;
-}
-
 void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
     // initialize hashmap
     std::unordered_map<int, vector<int>> found;
@@ -135,36 +93,6 @@ void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
                 cout << option << " ";
             }
             cout << "\n";
-        }
-    }
-}
-void reduceOptionsTwins(array<vector<int>, 9> optionsForGroup) {
-    array<unordered_map<int, vector<int>>, 9> optionsAvailable;
-    for (int i = 0; i < 9; i++) { // iterate through each square
-        if (optionsForGroup[i].size() > 1) {
-            for (int j = 0; j < optionsForGroup[i].size(); j++) { // iterate through each option per square
-                for (int k = i + 1; k < 9; j++) { // iterate over the rest of squares
-                    int curr_option = optionsForGroup[i][j];
-                    auto found = find(optionsForGroup[k].begin(), optionsForGroup[k].end(), curr_option);
-                    if (found != optionsForGroup[k].end()) {
-                        vector<int> listOfSquaresCurr;
-                        vector<int> listOfSquaresMatch;
-                        try {
-                            listOfSquaresCurr = optionsAvailable[i].at(curr_option);
-                        } catch (const std::out_of_range& e) {}   
-                        try {
-                            listOfSquaresMatch = optionsAvailable[k].at(curr_option);
-                        } catch (const std::out_of_range& e) {}   
-                        listOfSquaresCurr.push_back(k);
-                        listOfSquaresMatch.push_back(i);
-                        optionsAvailable[i].at(curr_option) = listOfSquaresCurr;
-                        optionsAvailable[k].at(curr_option) = listOfSquaresMatch;
-                    }
-                }
-            }
-            // NOTES: ya esta la iteration para crear todos los hashmaps con las opciones
-            // de distintos cuadros donde se repite la opcion. Lo que falta (TODO:) es hacer
-            // el check y descartar los cuadrados que no cumplen los requisitos para twins
         }
     }
 }
@@ -197,6 +125,37 @@ void reduceOptionsLoneRanger(array<array<vector<int>, 9>, 9> options) {
             }
         }
         reduceOptionsLoneRanger(myArr);
+    }
+}
+
+void reduceOptionsTwins(array<vector<int>, 9> optionsForGroup) {
+    array<unordered_map<int, vector<int>>, 9> optionsAvailable;
+    for (int i = 0; i < 9; i++) { // iterate through each square
+        if (optionsForGroup[i].size() > 1) {
+            for (int j = 0; j < optionsForGroup[i].size(); j++) { // iterate through each option per square
+                for (int k = i + 1; k < 9; j++) { // iterate over the rest of squares
+                    int curr_option = optionsForGroup[i][j];
+                    auto found = find(optionsForGroup[k].begin(), optionsForGroup[k].end(), curr_option);
+                    if (found != optionsForGroup[k].end()) {
+                        vector<int> listOfSquaresCurr;
+                        vector<int> listOfSquaresMatch;
+                        try {
+                            listOfSquaresCurr = optionsAvailable[i].at(curr_option);
+                        } catch (const std::out_of_range& e) {}   
+                        try {
+                            listOfSquaresMatch = optionsAvailable[k].at(curr_option);
+                        } catch (const std::out_of_range& e) {}   
+                        listOfSquaresCurr.push_back(k);
+                        listOfSquaresMatch.push_back(i);
+                        optionsAvailable[i].at(curr_option) = listOfSquaresCurr;
+                        optionsAvailable[k].at(curr_option) = listOfSquaresMatch;
+                    }
+                }
+            }
+            // NOTES: ya esta la iteration para crear todos los hashmaps con las opciones
+            // de distintos cuadros donde se repite la opcion. Lo que falta (TODO:) es hacer
+            // el check y descartar los cuadrados que no cumplen los requisitos para twins
+        }
     }
 }
 
