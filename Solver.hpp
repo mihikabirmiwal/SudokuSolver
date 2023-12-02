@@ -20,7 +20,20 @@ array<array<vector<int>, 9>, 9> getOptions(const array<array<int, 9>, 9>& grid) 
     return options;
 }
 
-void reduceOptionsEliminationHelper(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid, int start, int end) {
+struct ThreadArgs {
+    array<array<vector<int>, 9>, 9>& options;
+    const array<array<int, 9>, 9>& grid;
+    int start;
+    int end;
+};
+
+void* reduceOptionsEliminationHelper(void* arg) {
+    ThreadArgs* threadArgs = static_cast<ThreadArgs*>(arg);
+    array<array<vector<int>, 9>, 9>& options = threadArgs->options;
+    const array<array<int, 9>, 9>& grid = threadArgs->grid;
+    int start = threadArgs->start;
+    int end = threadArgs->end;
+
     for(int j=start;j<end;j++) {
         int r = j/9;
         int c = j%9;
@@ -62,10 +75,13 @@ void reduceOptionsEliminationHelper(array<array<vector<int>, 9>, 9>& options, co
             }
         }
     }
+    delete threadArgs;
+    pthread_exit(nullptr);
 }
 
+
 void reduceOptionsElimination(array<array<vector<int>, 9>, 9>& options, const array<array<int, 9>, 9>& grid, int numThreads) {
-    // pthread_t threads[numThreads];
+    pthread_t threads[numThreads];
     if(numThreads>81) numThreads = 81;
     int expectedLoad = 81/numThreads;
     int extraLoad = 81%numThreads;
@@ -76,13 +92,15 @@ void reduceOptionsElimination(array<array<vector<int>, 9>, 9>& options, const ar
             endCalc++;
             extraLoad--;
         }
-        reduceOptionsEliminationHelper(options, grid, startCalc, endCalc);
+        ThreadArgs* args = new ThreadArgs{options, grid, startCalc, endCalc};
+        pthread_create(&threads[i], nullptr, reduceOptionsEliminationHelper, static_cast<void*>(args));
+        // reduceOptionsEliminationHelper(options, grid, startCalc, endCalc);
         startCalc = endCalc;
     }
-    // // wait on all threads to finish
-    // for(int i=0;i<numThreads;i++) {
-    //     pthread_join(threads[i], NULL);
-    // }
+    // wait on all threads to finish
+    for(int i=0;i<numThreads;i++) {
+        pthread_join(threads[i], nullptr);
+    }
 }
 
 void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
