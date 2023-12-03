@@ -122,7 +122,7 @@ void reduceOptionsLoneRanger(array<vector<int>, 9>& options) {
             // is a lone ranger!
             int value = pair.first;
             int index = pair.second[0];
-            cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
+            // cout << "found a lone ranger! value = " << value << " index = " << index << "\n";
             options[index].clear();
             options[index].push_back(value);
         }
@@ -191,9 +191,6 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         }
     }
 
-    // printf("---->After populating:\n");
-    // printOptionsInSquares(optionsInSquares);
-
     // only keep options that are present in exactly 2 squares
     auto pair = optionsInSquares.begin();
     while (pair != optionsInSquares.end()){
@@ -204,12 +201,7 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         }
     }
 
-    // printf("---->After reducing based on size:\n");
-    // printOptionsInSquares(optionsInSquares);
-
-
     // check for twins
-
     auto firstPair = optionsInSquares.begin();
     bool found = false;
     while (firstPair != optionsInSquares.end()){
@@ -217,13 +209,18 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         ++secondPair;
         while (secondPair != optionsInSquares.end()){
             if (firstPair->second == secondPair->second){
-                printf("--->found twins!\n");
+                printf("testingTwins: --->found twins!\n");
+                printf("testingTwins: crashing1!\n");
                 int squareIndex1 = firstPair->second[0];
                 int squareIndex2 = firstPair->second[1];
                 vector<int> newOptions = {secondPair->first, firstPair->first};
 
+                printf("testingTwins: crashing2!\n");
+
                 optionsForAll[squareIndex1] = newOptions;
                 optionsForAll[squareIndex2] = newOptions;
+
+                printf("testingTwins: crashing3!\n");
                 found = true;
                 break;
             }
@@ -237,6 +234,17 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
     }
 }
 
+void *reduceOptionsTwins(void *arg){
+    array<vector<int>, 9> *options = (array<vector<int>, 9> *) arg;
+    reduceOptionsTwins(*options);
+    return NULL;
+
+
+    // LATEST UPDATE: attempting to implement parallel twins, but getting 
+    // a seg fault when doing so, I think it's within the while loop of
+    // finding twins because that's where if I use printf it gets fixed.
+    // TODO: use gdb or other debugging to see exaclty where it fails
+}
 
 void reduceOptionsTwins(array<array<vector<int>, 9>, 9>& options) {
     // all rows
@@ -268,6 +276,54 @@ void reduceOptionsTwins(array<array<vector<int>, 9>, 9>& options) {
             }
         }
         reduceOptionsTwins(myArr);
+    }
+}
+
+
+void reduceOptionsTwinsParallel(array<array<vector<int>, 9>, 9>& options) {
+    // all rows
+    pthread_t worker_threads[9];
+    // printf("is it this?\n");
+    for(int r = 0; r < 9; r++){
+        pthread_create(&worker_threads[r], nullptr, reduceOptionsTwins, (void*) &options[r]);
+    }
+
+    for (int i = 0; i < 9; i++) {
+        pthread_join(worker_threads[i], NULL);
+    }
+
+    // all cols
+    for(int c = 0; c < 9; c++){
+        array<vector<int>, 9> myArr;
+        for(int r = 0; r < 9; r++) {
+            myArr[r] = options[r][c];
+        }
+        pthread_create(&worker_threads[c], nullptr, reduceOptionsTwins, (void*) &myArr);
+    }
+
+    for (int i = 0; i < 9; i++) {
+        pthread_join(worker_threads[i], NULL);
+    }
+
+    // all subsquares
+    for(int sq = 0; sq < 9; sq++) {
+        array<vector<int>, 9> myArr;
+        int startRow = sq/3;
+        int startCol = sq%3;
+        startRow *= 3;
+        startCol *= 3;
+        int index = 0;
+        for(int r = 0; r < 3; r++) {
+            for(int c = 0; c < 3; c++) {
+                myArr[index] = options[startRow+r][startCol+c];
+                index++;
+            }
+        }
+        pthread_create(&worker_threads[sq], nullptr, reduceOptionsTwins, (void*) &myArr);
+    }
+
+    for (int i = 0; i < 9; i++) {
+        pthread_join(worker_threads[i], NULL);
     }
 }
 

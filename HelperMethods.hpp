@@ -71,46 +71,49 @@ array<vector<int>, 9> loneRangerTester() {
 }
 
 
-void testingTwins(array<array<int, 9>, 9>& testCase, ostream& output) {
+void testingTwins(array<array<int, 9>, 9>& testCase, ostream& output, int numThreads) {
+    printf("testingTwins: New grid\n");
     output << "\n\n~~~~~~~~~~~~~~~~~~\n";
     array<array<int, 9>, 9> firstRun = testCase;
     output << "TESTING TWINS:\n\n";
     output << "Original:\n";
     printBoard(firstRun, output);
     array<array<vector<int>, 9>, 9> allOptions = getOptions(firstRun);
-    reduceOptionsElimination(allOptions, firstRun);
+    reduceOptionsElimination(allOptions, firstRun, numThreads);
     bool x = pureBacktracking(firstRun, allOptions);
     output << "After elimination + backtracking:\n";
     printBoard(firstRun, output);
 
     array<array<int, 9>, 9> secondRun = testCase;
     allOptions = getOptions(secondRun);
-    reduceOptionsElimination(allOptions, secondRun);
-    reduceOptionsTwins(allOptions);
+    reduceOptionsElimination(allOptions, secondRun, numThreads);
+    reduceOptionsTwinsParallel(allOptions);
+    // reduceOptionsTwins(allOptions);
     x = pureBacktracking(secondRun, allOptions);
     output << "After elimination + twins + backtracking:\n";
     printBoard(secondRun, output);
 }
 
-void testingTriplets(array<array<int, 9>, 9>& testCase, ostream& output) {
+void testingTriplets(array<array<int, 9>, 9>& testCase, ostream& output, int numThreads) {
     output << "\n\n~~~~~~~~~~~~~~~~~~\n";
     array<array<int, 9>, 9> firstRun = testCase;
     output << "TESTING TRIPLETS:\n\n";
     output << "Original:\n";
     printBoard(firstRun, output);
     array<array<vector<int>, 9>, 9> allOptions = getOptions(firstRun);
-    reduceOptionsElimination(allOptions, firstRun);
+    reduceOptionsElimination(allOptions, firstRun, numThreads);
     bool x = pureBacktracking(firstRun, allOptions);
     output << "After elimination + backtracking:\n";
     printBoard(firstRun, output);
 
     array<array<int, 9>, 9> secondRun = testCase;
     allOptions = getOptions(secondRun);
-    reduceOptionsElimination(allOptions, secondRun);
+    reduceOptionsElimination(allOptions, secondRun, numThreads);
     reduceOptionsTriplets(allOptions);
     x = pureBacktracking(secondRun, allOptions);
     output << "After elimination + triplets + backtracking:\n";
     printBoard(secondRun, output);
+    printf("\n");
 }
 
 array<vector<int>, 9> twinsTester() {
