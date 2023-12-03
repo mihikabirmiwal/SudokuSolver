@@ -37,42 +37,6 @@ void printOptions(const array<array<vector<int>, 9>, 9>& options) {
     printf("-----------\n");
 }
 
-void printOptionsInSquares(const std::unordered_map<int, std::vector<int>>& optionsInSquares) {
-    for (const auto& pair : optionsInSquares) {
-        std::cout << pair.first << "=";
-
-        // Print vector elements separated by commas
-        for (size_t i = 0; i < pair.second.size(); ++i) {
-            std::cout << pair.second[i];
-            if (i < pair.second.size() - 1) {
-                std::cout << ",";
-            }
-        }
-
-        std::cout << "\n";
-    }
-}
-
-void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
-    for (const auto& vec : testCase) {
-        for (int value : vec) {
-            std::cout << value << " ";
-        }
-        std::cout << "\t\t";
-    }
-    std::cout << "\n";
-}
-
-void printOptionsPerGrouping(const array<vector<int>, 9>& optionsForAll) {
-    for (size_t i = 0; i < optionsForAll.size(); ++i) {
-        std::cout << "Square " << i + 1 << ": ";
-        for (const int& value : optionsForAll[i]) {
-            std::cout << value << " ";
-        }
-        std::cout << "\n";
-    }
-}
-
 // TESTING FUNCTIONS
 
 array<vector<int>, 9> loneRangerTester() {
