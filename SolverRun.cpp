@@ -95,13 +95,25 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-    // testing reduceOptionsTwins
+    // // testing reduceOptionsTwins
     // printf("TESTING REDUCE OPTIONS TWINS\n");
+    // array<vector<int>, 9> testCase1 = twinsTester();
     // printf("BEFORE:\n");
-    // printTestCase(test_case1);
-    // reduceOptionsTwins(test_case1);
+    // printTestCase(testCase1);
+    // reduceOptionsTwins(testCase1);
     // printf("AFTER:\n");
-    // printTestCase(test_case1);
+    // printTestCase(testCase1);
+    // printf("\n");
+
+    // // testing reduceOptionsTriplets
+    // printf("TESTING REDUCE OPTIONS TRIPLETS\n");
+    // printf("BEFORE:\n");
+    // array<vector<int>, 9> testCase2 = tripletsTester();
+    // printTestCase(testCase2);
+    // reduceOptionsTriplets(testCase2);
+    // printf("AFTER:\n");
+    // printTestCase(testCase2);
+    // printf("\n");
     
     for (auto& testCase : testCases) {
         printf("BEFORE SOLVING\n");
@@ -110,6 +122,8 @@ int main(int argc, char **argv) {
         // printOptions(allOptions);
         reduceOptionsElimination(allOptions, testCase);
         // printOptions(allOptions);
+        reduceOptionsTriplets(allOptions);
+        reduceOptionsTwins(allOptions);
         reduceOptionsLoneRanger(allOptions);
         // printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
@@ -117,7 +131,8 @@ int main(int argc, char **argv) {
         printBoard(testCase);
 
 
-        // testingTwins(testCase);
+        // testingTwins(testCase, output_file);
+        // testingTriplets(testCase, output_file); // NOTE: no triplets found on the test cases we have
 
         // just to do the first one
         break;

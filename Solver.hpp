@@ -152,27 +152,31 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
     }
 
     // check for twins
-    auto currPair = optionsInSquares.begin();
-    auto nextPair = optionsInSquares.begin();
-    if (nextPair != optionsInSquares.end()) {
-        ++nextPair;
-    }
-    while (currPair != optionsInSquares.end() && nextPair != optionsInSquares.end()){
-        while (nextPair != optionsInSquares.end() && currPair != nextPair){
-            if(currPair->second == nextPair->second){
+
+    auto firstPair = optionsInSquares.begin();
+    bool found = false;
+    while (firstPair != optionsInSquares.end()){
+        auto secondPair = firstPair;
+        ++secondPair;
+        while (secondPair != optionsInSquares.end()){
+            if (firstPair->second == secondPair->second){
                 printf("--->found twins!\n");
-                int squareIndex1 = currPair->second.front();
-                int squareIndex2 = currPair->second.back();
-                vector<int> newOptions = {currPair->first, nextPair->first};
-                
+                int squareIndex1 = firstPair->second[0];
+                int squareIndex2 = firstPair->second[1];
+                vector<int> newOptions = {secondPair->first, firstPair->first};
+
                 optionsForAll[squareIndex1] = newOptions;
                 optionsForAll[squareIndex2] = newOptions;
+                found = true;
                 break;
             }
-            ++nextPair;
+            if (found) {
+                break;
+            } else {
+                ++secondPair;
+            }
         }
-        ++currPair;
-        nextPair = optionsInSquares.begin();
+        ++firstPair;
     }
 }
 
@@ -207,6 +211,107 @@ void reduceOptionsTwins(array<array<vector<int>, 9>, 9>& options) {
             }
         }
         reduceOptionsTwins(myArr);
+    }
+}
+
+
+void reduceOptionsTriplets(array<vector<int>, 9>& optionsForAll){
+    // initialize map
+    unordered_map<int, vector<int>> optionsInSquares;
+    for(int i = 1; i <= 9 ; i++) {
+        optionsInSquares[i] = {};
+    }
+
+    // populate map
+    for(int i = 0; i < 9 ; i++) {
+        vector<int> currSqOptions = optionsForAll[i];
+        for(int option: currSqOptions) {
+            optionsInSquares[option].push_back(i);
+        }
+    }
+
+    // only keep options that are present in exactly 3 squares
+    auto pair = optionsInSquares.begin();
+    while (pair != optionsInSquares.end()){
+        if(pair->second.size() != 3) {
+            pair = optionsInSquares.erase(pair);
+        } else {
+            ++pair;
+        }
+    }
+
+    // check for triplets
+    auto firstPair = optionsInSquares.begin();
+    bool found = false;
+
+    while (firstPair != optionsInSquares.end()){
+        auto secondPair = firstPair;
+        ++secondPair;
+        while (secondPair != optionsInSquares.end()){
+            auto thirdPair = secondPair;
+            ++thirdPair;
+            while (thirdPair != optionsInSquares.end()){
+                if (firstPair->second == secondPair->second && secondPair->second == thirdPair->second){
+                    printf("--->found triplets!\n");
+                    int squareIndex1 = firstPair->second[0];
+                    int squareIndex2 = firstPair->second[1];
+                    int squareIndex3 = firstPair->second[2];
+                    vector<int> newOptions = {thirdPair->first, secondPair->first, firstPair->first};
+
+                    optionsForAll[squareIndex1] = newOptions;
+                    optionsForAll[squareIndex2] = newOptions;
+                    optionsForAll[squareIndex3] = newOptions;
+                    found = true;
+                    break;
+                }
+                if (found) {
+                    break;
+                } else {
+                    ++thirdPair;
+                }
+            }
+            if (found){
+                break;
+            } else {
+                ++secondPair;
+            }
+        }
+        ++firstPair;
+    }
+}
+
+
+
+void reduceOptionsTriplets(array<array<vector<int>, 9>, 9>& options) {
+    // all rows
+    for(int r = 0; r < 9; r++) {
+        reduceOptionsTriplets(options[r]);
+    }
+
+    // all cols
+    for(int c = 0; c < 9; c++) {
+        array<vector<int>, 9> myArr;
+        for(int r = 0; r < 9; r++) {
+            myArr[r] = options[r][c];
+        }
+        reduceOptionsTriplets(myArr);
+    }
+
+    // all subsquares
+    for(int sq = 0; sq < 9; sq++) {
+        array<vector<int>, 9> myArr;
+        int startRow = sq/3;
+        int startCol = sq%3;
+        startRow *= 3;
+        startCol *= 3;
+        int index = 0;
+        for(int r = 0; r < 3; r++) {
+            for(int c = 0; c < 3; c++) {
+                myArr[index] = options[startRow+r][startCol+c];
+                index++;
+            }
+        }
+        reduceOptionsTriplets(myArr);
     }
 }
 
