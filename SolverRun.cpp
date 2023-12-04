@@ -131,27 +131,27 @@ int main(int argc, char **argv) {
     // printf("\n");
     
     for (auto& testCase : testCases) {
-        // printf("BEFORE SOLVING\n");
-        // printBoard(testCase);
-        // array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        // // printOptions(allOptions);
-        // reduceOptionsElimination(allOptions, testCase, numThreads);
-        // // printOptions(allOptions);
-        // reduceOptionsTriplets(allOptions);
-        // // printOptions(allOptions);
-        // reduceOptionsTwinsParallel(allOptions);
-        // // printOptions(allOptions);
-        // reduceOptionsLoneRanger(allOptions);
-        // // printOptions(allOptions);
-        // bool x = pureBacktracking(testCase, allOptions);
-        // printf("AFTER SOLVING\n");
-        // printBoard(testCase);
+        printf("BEFORE SOLVING\n");
+        printBoard(testCase);
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        // printOptions(allOptions);
+        reduceOptionsElimination(allOptions, testCase, numThreads);
+        // printOptions(allOptions);
+        reduceOptionsTriplets(allOptions);
+        // printOptions(allOptions);
+        reduceOptionsTwinsParallel(allOptions);
+        // printOptions(allOptions);
+        reduceOptionsLoneRanger(allOptions);
+        // printOptions(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+        printf("AFTER SOLVING\n");
+        printBoard(testCase);
 
 
-        testingTwins(testCase, output_file, numThreads);
-        // testingTriplets(testCase, output_file, numThreads); // NOTE: no triplets found on the test cases we have
+        // testingTwins(testCase, output_file, numThreads);
+        // testingTriplets(testCase, output_file, numThreads); // NOTE: only one triplet in test cases
 
         // just to do the first one
-        // break;
+        break;
     }    
 }

@@ -87,14 +87,15 @@ void testingTwins(array<array<int, 9>, 9>& testCase, ostream& output, int numThr
     array<array<int, 9>, 9> secondRun = testCase;
     allOptions = getOptions(secondRun);
     reduceOptionsElimination(allOptions, secondRun, numThreads);
-    reduceOptionsTwinsParallel(allOptions);
-    // reduceOptionsTwins(allOptions);
+    reduceOptionsTwinsParallel(allOptions); // parallel
+    // reduceOptionsTwins(allOptions); // sequential
     x = pureBacktracking(secondRun, allOptions);
     output << "After elimination + twins + backtracking:\n";
     printBoard(secondRun, output);
 }
 
 void testingTriplets(array<array<int, 9>, 9>& testCase, ostream& output, int numThreads) {
+    printf("testingTriplets: New grid\n");
     output << "\n\n~~~~~~~~~~~~~~~~~~\n";
     array<array<int, 9>, 9> firstRun = testCase;
     output << "TESTING TRIPLETS:\n\n";
@@ -109,11 +110,11 @@ void testingTriplets(array<array<int, 9>, 9>& testCase, ostream& output, int num
     array<array<int, 9>, 9> secondRun = testCase;
     allOptions = getOptions(secondRun);
     reduceOptionsElimination(allOptions, secondRun, numThreads);
-    reduceOptionsTriplets(allOptions);
+    reduceOptionsTripletsParallel(allOptions); // parallel
+    // reduceOptionsTriplets(allOptions); // sequential
     x = pureBacktracking(secondRun, allOptions);
     output << "After elimination + triplets + backtracking:\n";
     printBoard(secondRun, output);
-    printf("\n");
 }
 
 array<vector<int>, 9> twinsTester() {
