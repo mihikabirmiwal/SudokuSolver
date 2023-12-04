@@ -5,6 +5,8 @@
 #include <vector>
 #include "Solver.hpp"
 #include "HelperMethods.hpp"
+#include "Elimination.hpp"
+#include "LoneRanger.hpp"
 
 using namespace std;
 
@@ -126,7 +128,12 @@ int main(int argc, char **argv) {
         printOptions(allOptions);
         reduceOptionsElimination(allOptions, testCase, numThreads);
         printOptions(allOptions);
-        reduceOptionsLoneRanger(allOptions);
+        if(numThreads>1) {
+            reduceOptionsLoneRangerMulti(allOptions);
+        } else {
+            reduceOptionsLoneRangerSingle(allOptions);
+        }
+        
         printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
         printf("AFTER SOLVING\n");
