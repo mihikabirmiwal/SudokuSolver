@@ -3,12 +3,14 @@
 #include <fstream>
 #include <array>
 #include <vector>
+#include <cassert>
 #include "Solver.hpp"
 #include "HelperMethods.hpp"
 #include "Elimination.hpp"
 #include "LoneRanger.hpp"
 #include "Twins.hpp"
 #include "Triplets.hpp"
+#include "Checker.hpp"
 
 using namespace std;
 
@@ -105,31 +107,33 @@ int main(int argc, char **argv) {
     }
     
     for (auto& testCase : testCases) {
-        printf("BEFORE SOLVING\n");
-        printBoard(testCase);
+        // printf("BEFORE SOLVING\n");
+        // printBoard(testCase);
         array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        printOptions(allOptions);
+        // printOptions(allOptions);
         reduceOptionsElimination(allOptions, testCase, numThreads);       
-        printOptions(allOptions);
+        // printOptions(allOptions);
         reduceOptionsTriplets(allOptions);
-        printOptions(allOptions);
+        // printOptions(allOptions);
         reduceOptionsTwinsParallel(allOptions);
-        printOptions(allOptions);
+        // printOptions(allOptions);
         if(numThreads>1) {
             reduceOptionsLoneRangerMulti(allOptions);
         } else {
             reduceOptionsLoneRangerSingle(allOptions);
         }
-        printOptions(allOptions);
+        // printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
         printf("AFTER SOLVING\n");
         printBoard(testCase);
+        assert(isValidSolution(testCase));
+        printf("passed testcase!\n");
 
 
         // testingTwins(testCase, output_file, numThreads);
         // testingTriplets(testCase, output_file, numThreads); // NOTE: only one triplet in test cases
 
         // just to do the first one
-        break;
+        // break;
     }    
 }
