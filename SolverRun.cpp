@@ -3,6 +3,7 @@
 #include <fstream>
 #include <array>
 #include <vector>
+#include <cassert>
 #include "Solver.hpp"
 #include "HelperMethods.hpp"
 #include "Elimination.hpp"
@@ -10,6 +11,7 @@
 #include "Twins.hpp"
 #include "Triplets.hpp"
 #include <chrono>
+#include "Checker.hpp"
 
 using namespace std;
 
