@@ -33,7 +33,7 @@ void reduceOptionsTwins(array<vector<int>, 9>& optionsForAll) {
         ++secondPair;
         while (secondPair != optionsInSquares.end()){
             if (firstPair->second == secondPair->second){
-                printf("testingTwins: --->found twins!\n");
+                // printf("testingTwins: --->found twins!\n");
                 // printf("testingTwins: crashing1!\n");
                 int squareIndex1 = firstPair->second[0];
                 int squareIndex2 = firstPair->second[1];
