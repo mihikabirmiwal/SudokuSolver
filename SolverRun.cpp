@@ -112,32 +112,50 @@ int main(int argc, char **argv) {
         next_char = input_file.peek();
     }
 
-
-    // testing reduceOptionsTwins
+    // // testing reduceOptionsTwins
     // printf("TESTING REDUCE OPTIONS TWINS\n");
+    // array<vector<int>, 9> testCase1 = twinsTester();
     // printf("BEFORE:\n");
-    // printTestCase(test_case1);
-    // reduceOptionsTwins(test_case1);
+    // printTestCase(testCase1);
+    // reduceOptionsTwins(testCase1);
     // printf("AFTER:\n");
-    // printTestCase(test_case1);
+    // printTestCase(testCase1);
+    // printf("\n");
+
+    // // testing reduceOptionsTriplets
+    // printf("TESTING REDUCE OPTIONS TRIPLETS\n");
+    // printf("BEFORE:\n");
+    // array<vector<int>, 9> testCase2 = tripletsTester();
+    // printTestCase(testCase2);
+    // reduceOptionsTriplets(testCase2);
+    // printf("AFTER:\n");
+    // printTestCase(testCase2);
+    // printf("\n");
     
     for (auto& testCase : testCases) {
         printf("BEFORE SOLVING\n");
         printBoard(testCase);
         array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
         printOptions(allOptions);
-        reduceOptionsElimination(allOptions, testCase, numThreads);
+        reduceOptionsElimination(allOptions, testCase, numThreads);       
+        printOptions(allOptions);
+        reduceOptionsTriplets(allOptions);
+        printOptions(allOptions);
+        reduceOptionsTwinsParallel(allOptions);
         printOptions(allOptions);
         if(numThreads>1) {
             reduceOptionsLoneRangerMulti(allOptions);
         } else {
             reduceOptionsLoneRangerSingle(allOptions);
         }
-        
         printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
         printf("AFTER SOLVING\n");
         printBoard(testCase);
+
+
+        // testingTwins(testCase, output_file, numThreads);
+        // testingTriplets(testCase, output_file, numThreads); // NOTE: only one triplet in test cases
 
         // just to do the first one
         break;
