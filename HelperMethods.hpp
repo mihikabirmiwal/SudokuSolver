@@ -5,6 +5,16 @@ using namespace std;
 
 // PRINTING FUNCTIONS
 
+void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
+    for (const auto& vec : testCase) {
+        for (int value : vec) {
+            std::cout << value << " ";
+        }
+        std::cout << "\t\t";  // Two tabs between vectors
+    }
+    std::cout << "\n";
+}
+
 void printBoard(const array<array<int, 9>, 9>& grid) {
     for (const auto& row : grid) {
         for (const auto& element : row) {
@@ -38,6 +48,26 @@ void printOptions(const array<array<vector<int>, 9>, 9>& options) {
 }
 
 // TESTING FUNCTIONS
+
+    // // testing reduceOptionsTwins
+    // printf("TESTING REDUCE OPTIONS TWINS\n");
+    // array<vector<int>, 9> testCase1 = twinsTester();
+    // printf("BEFORE:\n");
+    // printTestCase(testCase1);
+    // reduceOptionsTwins(testCase1);
+    // printf("AFTER:\n");
+    // printTestCase(testCase1);
+    // printf("\n");
+
+    // // testing reduceOptionsTriplets
+    // printf("TESTING REDUCE OPTIONS TRIPLETS\n");
+    // printf("BEFORE:\n");
+    // array<vector<int>, 9> testCase2 = tripletsTester();
+    // printTestCase(testCase2);
+    // reduceOptionsTriplets(testCase2);
+    // printf("AFTER:\n");
+    // printTestCase(testCase2);
+    // printf("\n");
 
 array<vector<int>, 9> loneRangerTester() {
     array<vector<int>, 9> ret;

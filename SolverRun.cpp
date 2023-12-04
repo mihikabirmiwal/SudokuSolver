@@ -7,6 +7,8 @@
 #include "HelperMethods.hpp"
 #include "Elimination.hpp"
 #include "LoneRanger.hpp"
+#include "Twins.hpp"
+#include "Triplets.hpp"
 
 using namespace std;
 
@@ -16,16 +18,6 @@ enum Algorithms {
     PARALLELIZED,
     ALL
 };
-
-void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
-    for (const auto& vec : testCase) {
-        for (int value : vec) {
-            std::cout << value << " ";
-        }
-        std::cout << "\t\t";  // Two tabs between vectors
-    }
-    std::cout << "\n";
-}
 
 int main(int argc, char **argv) {
     
@@ -111,26 +103,6 @@ int main(int argc, char **argv) {
         }
         next_char = input_file.peek();
     }
-
-    // // testing reduceOptionsTwins
-    // printf("TESTING REDUCE OPTIONS TWINS\n");
-    // array<vector<int>, 9> testCase1 = twinsTester();
-    // printf("BEFORE:\n");
-    // printTestCase(testCase1);
-    // reduceOptionsTwins(testCase1);
-    // printf("AFTER:\n");
-    // printTestCase(testCase1);
-    // printf("\n");
-
-    // // testing reduceOptionsTriplets
-    // printf("TESTING REDUCE OPTIONS TRIPLETS\n");
-    // printf("BEFORE:\n");
-    // array<vector<int>, 9> testCase2 = tripletsTester();
-    // printTestCase(testCase2);
-    // reduceOptionsTriplets(testCase2);
-    // printf("AFTER:\n");
-    // printTestCase(testCase2);
-    // printf("\n");
     
     for (auto& testCase : testCases) {
         printf("BEFORE SOLVING\n");
