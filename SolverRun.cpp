@@ -15,6 +15,8 @@
 
 using namespace std;
 
+// const int NUM_GRID_SIZE = 25;
+
 enum Algorithms {
     BACKTRACKING,
     CROOKS,
@@ -83,32 +85,58 @@ int main(int argc, char **argv) {
     }
     
     // read input file and store sudokus
-    vector<array<array<int, 9>, 9>> testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCases;
 
     char next_char = input_file.peek();
     char c;
 
-    while (next_char != EOF) {
-        if (next_char == 'G') {
-            string line;
-            getline(input_file, line);
-        } else {
-            array<array<int, 9>, 9> currSudoku;
-            for (int row = 0; row < 9; row++){
-                for (int col = 0; col < 9; col++){
-                    input_file.get(c);
-                    int i = int(c - '0');
-                    currSudoku[row][col] = i;
+    if (NUM_GRID_SIZE == 9){
+        while (next_char != EOF) {
+            if (next_char == 'G') {
+                string line;
+                getline(input_file, line);
+            } else {
+                array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> currSudoku;
+                for (int row = 0; row < NUM_GRID_SIZE; row++){
+                    for (int col = 0; col < NUM_GRID_SIZE; col++){
+                        input_file.get(c);
+                        int i = int(c - '0');
+                        currSudoku[row][col] = i;
+                    }
+                    input_file.get(c); // newline character
                 }
-                input_file.get(c); // newline character
+                testCases.push_back(currSudoku);
             }
-            testCases.push_back(currSudoku);
+            next_char = input_file.peek();
         }
-        next_char = input_file.peek();
+    } else {
+        while (next_char != EOF) {
+            if (next_char == 'G') {
+                string line;
+                getline(input_file, line);
+            } else {
+                array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> currSudoku;
+                int number;
+                int row = 0;
+                int col = 0;
+                while (input_file >> number) {
+                    currSudoku[col][row] = number;
+                    if (row == NUM_GRID_SIZE - 1){
+                        row = 0;
+                        col += 1;
+                    } else {
+                        row += 1;
+                    }
+                }
+                testCases.push_back(currSudoku);
+            }
+            next_char = input_file.peek();
+        }
     }
+    
 
-
-
+    printf("BEFORE SOLVING\n");
+    printBoard(testCases.front());
 
     // Test, time, and write to output
 
@@ -116,11 +144,11 @@ int main(int argc, char **argv) {
     // - bt (sequential)    
     printf("doing seq bt\n");
     output_file << "---- Testing sequential backtracking ----\n";
-    vector<array<array<int, 9>, 9>> testCasesSeqBt = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesSeqBt = testCases;
 
     auto start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesSeqBt) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         bool x = pureBacktracking(testCase, allOptions);
     }
     auto end = chrono::high_resolution_clock::now();
@@ -133,11 +161,11 @@ int main(int argc, char **argv) {
     // - bt+elimination (sequential)
     printf("doing seq bt + el\n");
     output_file << "---- Testing sequential backtracking + elimination ----\n";
-    vector<array<array<int, 9>, 9>> testCasesSeqBtEl = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesSeqBtEl = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesSeqBtEl) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, 1);       
         bool x = pureBacktracking(testCase, allOptions);
     }
@@ -148,16 +176,16 @@ int main(int argc, char **argv) {
     output_file << "\n";
 
 
-    // - bt+elimination (multithread) → find fastest num of threads [1-81]
+    // - bt+elimination (multithread) → find fastest num of threads [1-NUM_GRID_SIZE*NUM_GRID_SIZE]
     printf("doing multi bt + el\n");
     output_file << "---- Testing multithreaded backtracking + elimination ----\n";
-    array<chrono::duration<double>, 81> durations;
+    array<chrono::duration<double>, (NUM_GRID_SIZE*NUM_GRID_SIZE)> durations;
 
-    for (int num_threads = 1; num_threads <= 81; num_threads++) {
-        vector<array<array<int, 9>, 9>> testCasesMultiBtEl = testCases;
+    for (int num_threads = 1; num_threads <= (NUM_GRID_SIZE*NUM_GRID_SIZE); num_threads++) {
+        vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesMultiBtEl = testCases;
         start = chrono::high_resolution_clock::now();
         for (auto& testCase : testCasesMultiBtEl) {
-            array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+            array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
             reduceOptionsElimination(allOptions, testCase, num_threads);       
             bool x = pureBacktracking(testCase, allOptions);
         }
@@ -165,7 +193,7 @@ int main(int argc, char **argv) {
         durations[num_threads - 1] = end - start;
     }
 
-    for (int i = 0; i < 81; i++){
+    for (int i = 0; i < (NUM_GRID_SIZE*NUM_GRID_SIZE); i++){
         output_file << "Time to solve all sudokus with " << i + 1 << " threads: " << durations[i].count() << " s\n";
     }
     output_file << "\n";
@@ -183,11 +211,11 @@ int main(int argc, char **argv) {
     // - bt+elimination+triplets (sequential)
     printf("doing seq bt + el + tri\n");
     output_file << "---- Testing sequential backtracking + elimination + triplets ----\n";
-    vector<array<array<int, 9>, 9>> testCasesSeqBtElTri = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesSeqBtElTri = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesSeqBtElTri) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, 1);  
         reduceOptionsTriplets(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
@@ -203,11 +231,11 @@ int main(int argc, char **argv) {
     // - bt+elimination+triplets (multithread)
     printf("doing multi bt + el + tri\n");
     output_file << "---- Testing multithreaded backtracking + elimination + triplets ----\n";
-    vector<array<array<int, 9>, 9>> testCasesMultiBtElTri = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesMultiBtElTri = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesMultiBtElTri) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
         // printf("what\n");
         reduceOptionsTripletsParallel(allOptions);
@@ -224,11 +252,11 @@ int main(int argc, char **argv) {
     // - bt+elimination+triplets+twins (sequential)
     printf("doing seq bt + el + tri + twin\n");
     output_file << "---- Testing sequential backtracking + elimination + triplets + twins ----\n";
-    vector<array<array<int, 9>, 9>> testCasesSeqBtElTriTwi = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesSeqBtElTriTwi = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesSeqBtElTriTwi) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, 1);  
         reduceOptionsTriplets(allOptions);
         reduceOptionsTwins(allOptions);
@@ -245,11 +273,11 @@ int main(int argc, char **argv) {
     // - bt+elimination+triplets+twins (multithread)
     printf("doing multi bt + el + tri + twin\n");
     output_file << "---- Testing multithread backtracking + elimination + triplets + twins ----\n";
-    vector<array<array<int, 9>, 9>> testCasesMultiBtElTriTwi = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesMultiBtElTriTwi = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesMultiBtElTriTwi) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
         reduceOptionsTripletsParallel(allOptions);
         reduceOptionsTwinsParallel(allOptions);
@@ -266,11 +294,11 @@ int main(int argc, char **argv) {
         // - bt+elimination+triplets+twins+lone rangers (sequential)
     printf("doing seq bt + el + tri + twin + lr\n");
     output_file << "---- Testing sequential backtracking + elimination + triplets + twins + lone rangers ----\n";
-    vector<array<array<int, 9>, 9>> testCasesSeqBtElTriTwiLr = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesSeqBtElTriTwiLr = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesSeqBtElTriTwiLr) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, 1);  
         reduceOptionsTriplets(allOptions);
         reduceOptionsTwins(allOptions);
@@ -288,11 +316,11 @@ int main(int argc, char **argv) {
         // - bt+elimination+triplets+twins+lone rangers (multithread)
     printf("doing seq bt + el + tri + twin + lr\n");
     output_file << "---- Testing multithread backtracking + elimination + triplets + twins + lone rangers ----\n";
-    vector<array<array<int, 9>, 9>> testCasesMultiBtElTriTwiLr = testCases;
+    vector<array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>> testCasesMultiBtElTriTwiLr = testCases;
 
     start = chrono::high_resolution_clock::now();
     for (auto& testCase : testCasesMultiBtElTriTwiLr) {
-        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(testCase);
         reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
         reduceOptionsTripletsParallel(allOptions);
         reduceOptionsTwinsParallel(allOptions);

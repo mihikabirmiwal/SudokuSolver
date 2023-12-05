@@ -3,9 +3,11 @@
 
 using namespace std;
 
+// const int NUM_GRID_SIZE = 25;
+
 // PRINTING FUNCTIONS
 
-void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
+void printTestCase(const std::array<std::vector<int>, NUM_GRID_SIZE>& testCase) {
     for (const auto& vec : testCase) {
         for (int value : vec) {
             std::cout << value << " ";
@@ -15,7 +17,7 @@ void printTestCase(const std::array<std::vector<int>, 9>& testCase) {
     std::cout << "\n";
 }
 
-void printBoard(const array<array<int, 9>, 9>& grid) {
+void printBoard(const array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>& grid) {
     for (const auto& row : grid) {
         for (const auto& element : row) {
             printf("%d ", element);
@@ -25,7 +27,7 @@ void printBoard(const array<array<int, 9>, 9>& grid) {
     printf("-----------\n"); // Add a separator between 2D arrays
 }
 
-void printBoard(array<array<int, 9>, 9>& board, ostream& output) {
+void printBoard(array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>& board, ostream& output) {
     for (const auto& row : board) {
         for (int value : row) {
             output << value << " ";
@@ -34,7 +36,7 @@ void printBoard(array<array<int, 9>, 9>& board, ostream& output) {
     }
 }
 
-void printOptions(const array<array<vector<int>, 9>, 9>& options) {
+void printOptions(const array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE>& options) {
     printf("PRINTING OPTIONS\n");
     for(const auto& row: options) {
         for(const auto& col: row) {
@@ -51,7 +53,7 @@ void printOptions(const array<array<vector<int>, 9>, 9>& options) {
 
     // // testing reduceOptionsTwins
     // printf("TESTING REDUCE OPTIONS TWINS\n");
-    // array<vector<int>, 9> testCase1 = twinsTester();
+    // array<vector<int>, NUM_GRID_SIZE> testCase1 = twinsTester();
     // printf("BEFORE:\n");
     // printTestCase(testCase1);
     // reduceOptionsTwins(testCase1);
@@ -62,15 +64,15 @@ void printOptions(const array<array<vector<int>, 9>, 9>& options) {
     // // testing reduceOptionsTriplets
     // printf("TESTING REDUCE OPTIONS TRIPLETS\n");
     // printf("BEFORE:\n");
-    // array<vector<int>, 9> testCase2 = tripletsTester();
+    // array<vector<int>, NUM_GRID_SIZE> testCase2 = tripletsTester();
     // printTestCase(testCase2);
     // reduceOptionsTriplets(testCase2);
     // printf("AFTER:\n");
     // printTestCase(testCase2);
     // printf("\n");
 
-array<vector<int>, 9> loneRangerTester() {
-    array<vector<int>, 9> ret;
+array<vector<int>, NUM_GRID_SIZE> loneRangerTester() {
+    array<vector<int>, NUM_GRID_SIZE> ret;
     ret[0].push_back(1);
     ret[0].push_back(2);
 
@@ -90,10 +92,10 @@ array<vector<int>, 9> loneRangerTester() {
     ret[5].push_back(7);
 
     ret[6].push_back(8);
-    ret[6].push_back(9);
+    ret[6].push_back(NUM_GRID_SIZE);
 
     ret[7].push_back(8);
-    ret[7].push_back(9);
+    ret[7].push_back(NUM_GRID_SIZE);
     ret[7].push_back(1);
 
     ret[8].push_back(2);
@@ -101,20 +103,20 @@ array<vector<int>, 9> loneRangerTester() {
 }
 
 
-// void testingTwins(array<array<int, 9>, 9>& testCase, ostream& output, int numThreads) {
+// void testingTwins(array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>& testCase, ostream& output, int numThreads) {
 //     printf("testingTwins: New grid\n");
 //     output << "\n\n~~~~~~~~~~~~~~~~~~\n";
-//     array<array<int, 9>, 9> firstRun = testCase;
+//     array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> firstRun = testCase;
 //     output << "TESTING TWINS:\n\n";
 //     output << "Original:\n";
 //     printBoard(firstRun, output);
-//     array<array<vector<int>, 9>, 9> allOptions = getOptions(firstRun);
+//     array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(firstRun);
 //     reduceOptionsElimination(allOptions, firstRun, numThreads);
 //     bool x = pureBacktracking(firstRun, allOptions);
 //     output << "After elimination + backtracking:\n";
 //     printBoard(firstRun, output);
 
-//     array<array<int, 9>, 9> secondRun = testCase;
+//     array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> secondRun = testCase;
 //     allOptions = getOptions(secondRun);
 //     reduceOptionsElimination(allOptions, secondRun, numThreads);
 //     reduceOptionsTwinsParallel(allOptions); // parallel
@@ -124,20 +126,20 @@ array<vector<int>, 9> loneRangerTester() {
 //     printBoard(secondRun, output);
 // }
 
-// void testingTriplets(array<array<int, 9>, 9>& testCase, ostream& output, int numThreads) {
+// void testingTriplets(array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>& testCase, ostream& output, int numThreads) {
 //     printf("testingTriplets: New grid\n");
 //     output << "\n\n~~~~~~~~~~~~~~~~~~\n";
-//     array<array<int, 9>, 9> firstRun = testCase;
+//     array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> firstRun = testCase;
 //     output << "TESTING TRIPLETS:\n\n";
 //     output << "Original:\n";
 //     printBoard(firstRun, output);
-//     array<array<vector<int>, 9>, 9> allOptions = getOptions(firstRun);
+//     array<array<vector<int>, NUM_GRID_SIZE>, NUM_GRID_SIZE> allOptions = getOptions(firstRun);
 //     reduceOptionsElimination(allOptions, firstRun, numThreads);
 //     bool x = pureBacktracking(firstRun, allOptions);
 //     output << "After elimination + backtracking:\n";
 //     printBoard(firstRun, output);
 
-//     array<array<int, 9>, 9> secondRun = testCase;
+//     array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE> secondRun = testCase;
 //     allOptions = getOptions(secondRun);
 //     reduceOptionsElimination(allOptions, secondRun, numThreads);
 //     reduceOptionsTripletsParallel(allOptions); // parallel
@@ -147,8 +149,8 @@ array<vector<int>, 9> loneRangerTester() {
 //     printBoard(secondRun, output);
 // }
 
-array<vector<int>, 9> twinsTester() {
-    array<vector<int>, 9> test_case1;
+array<vector<int>, NUM_GRID_SIZE> twinsTester() {
+    array<vector<int>, NUM_GRID_SIZE> test_case1;
     vector<int> square1 = {1, 2, 8};
     vector<int> square2 = {3};
     vector<int> square3 = {1, 4};
@@ -172,8 +174,8 @@ array<vector<int>, 9> twinsTester() {
     return test_case1;
 }
 
-array<vector<int>, 9> tripletsTester() {
-    array<vector<int>, 9> test_case1;
+array<vector<int>, NUM_GRID_SIZE> tripletsTester() {
+    array<vector<int>, NUM_GRID_SIZE> test_case1;
     vector<int> square1 = {3, 4};
     vector<int> square2 = {2};
     vector<int> square3 = {3, 4, 8};

@@ -1,32 +1,37 @@
 #include <unordered_set>
+#include <cmath>
 using namespace std;
 
-bool isValidSolution(const array<array<int, 9>, 9>& solved) {
+// const int NUM_GRID_SIZE = 25;
+
+bool isValidSolution(const array<array<int, NUM_GRID_SIZE>, NUM_GRID_SIZE>& solved) {
     // check rows
-    for(int r=0;r<9;r++) {
+    for(int r=0;r<NUM_GRID_SIZE;r++) {
         unordered_set<int> rowSet;
-        for(int c=0;c<9;c++) rowSet.insert(solved[r][c]);
-        if(rowSet.size()!=9) return false;
+        for(int c=0;c<NUM_GRID_SIZE;c++) rowSet.insert(solved[r][c]);
+        if(rowSet.size()!=NUM_GRID_SIZE) return false;
     }
     // check cols 
-    for(int c=0;c<9;c++){
+    for(int c=0;c<NUM_GRID_SIZE;c++){
         unordered_set<int> colSet;
-        for(int r=0;r<9;r++) colSet.insert(solved[r][c]);
-        if(colSet.size()!=9) return false;
+        for(int r=0;r<NUM_GRID_SIZE;r++) colSet.insert(solved[r][c]);
+        if(colSet.size()!=NUM_GRID_SIZE) return false;
     }
     // check subsquare
-    for(int sq=0;sq<9;sq++) {
+    for(int sq=0;sq<NUM_GRID_SIZE;sq++) {
         unordered_set<int> sqSet;
-        int startRow = sq/3;
-        int startCol = sq%3;
-        startRow *= 3;
-        startCol *= 3;
-        for(int r=0;r<3;r++) {
-            for(int c=0;c<3;c++) {
+        double num = NUM_GRID_SIZE;
+        int subsquare = static_cast<int>(sqrt(num));
+        int startRow = sq/subsquare;
+        int startCol = sq%subsquare;
+        startRow *= subsquare;
+        startCol *= subsquare;
+        for(int r=0;r<subsquare;r++) {
+            for(int c=0;c<subsquare;c++) {
                 sqSet.insert(solved[startRow+r][startCol+c]);
             }
         }
-        if(sqSet.size()!=9) return false;
+        if(sqSet.size()!=NUM_GRID_SIZE) return false;
     }
     // passed all checks
     return true;
