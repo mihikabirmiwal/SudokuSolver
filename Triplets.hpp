@@ -37,7 +37,7 @@ void reduceOptionsTriplets(array<vector<int>, 9>& optionsForAll){
             ++thirdPair;
             while (thirdPair != optionsInSquares.end()){
                 if (firstPair->second == secondPair->second && secondPair->second == thirdPair->second){
-                    printf("--->found triplets!\n");
+                    // printf("--->found triplets!\n");
                     int squareIndex1 = firstPair->second[0];
                     int squareIndex2 = firstPair->second[1];
                     int squareIndex3 = firstPair->second[2];

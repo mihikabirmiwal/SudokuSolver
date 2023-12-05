@@ -10,6 +10,7 @@
 #include "LoneRanger.hpp"
 #include "Twins.hpp"
 #include "Triplets.hpp"
+#include <chrono>
 #include "Checker.hpp"
 
 using namespace std;
@@ -105,35 +106,202 @@ int main(int argc, char **argv) {
         }
         next_char = input_file.peek();
     }
-    
-    for (auto& testCase : testCases) {
-        // printf("BEFORE SOLVING\n");
-        // printBoard(testCase);
+
+
+
+
+    // Test, time, and write to output
+
+
+    // - bt (sequential)    
+    printf("doing seq bt\n");
+    output_file << "---- Testing sequential backtracking ----\n";
+    vector<array<array<int, 9>, 9>> testCasesSeqBt = testCases;
+
+    auto start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesSeqBt) {
         array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
-        // printOptions(allOptions);
-        reduceOptionsElimination(allOptions, testCase, numThreads);       
-        // printOptions(allOptions);
-        reduceOptionsTriplets(allOptions);
-        // printOptions(allOptions);
-        reduceOptionsTwinsParallel(allOptions);
-        // printOptions(allOptions);
-        if(numThreads>1) {
-            reduceOptionsLoneRangerMulti(allOptions);
-        } else {
-            reduceOptionsLoneRangerSingle(allOptions);
-        }
-        // printOptions(allOptions);
         bool x = pureBacktracking(testCase, allOptions);
-        printf("AFTER SOLVING\n");
-        printBoard(testCase);
-        assert(isValidSolution(testCase));
-        printf("passed testcase!\n");
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
 
 
-        // testingTwins(testCase, output_file, numThreads);
-        // testingTriplets(testCase, output_file, numThreads); // NOTE: only one triplet in test cases
+    // - bt+elimination (sequential)
+    printf("doing seq bt + el\n");
+    output_file << "---- Testing sequential backtracking + elimination ----\n";
+    vector<array<array<int, 9>, 9>> testCasesSeqBtEl = testCases;
 
-        // just to do the first one
-        // break;
-    }    
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesSeqBtEl) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, 1);       
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+
+    // - bt+elimination (multithread) → find fastest num of threads [1-81]
+    printf("doing multi bt + el\n");
+    output_file << "---- Testing multithreaded backtracking + elimination ----\n";
+    array<chrono::duration<double>, 81> durations;
+
+    for (int num_threads = 1; num_threads <= 81; num_threads++) {
+        vector<array<array<int, 9>, 9>> testCasesMultiBtEl = testCases;
+        start = chrono::high_resolution_clock::now();
+        for (auto& testCase : testCasesMultiBtEl) {
+            array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+            reduceOptionsElimination(allOptions, testCase, num_threads);       
+            bool x = pureBacktracking(testCase, allOptions);
+        }
+        end = chrono::high_resolution_clock::now();
+        durations[num_threads - 1] = end - start;
+    }
+
+    for (int i = 0; i < 81; i++){
+        output_file << "Time to solve all sudokus with " << i + 1 << " threads: " << durations[i].count() << " s\n";
+    }
+    output_file << "\n";
+
+    // Find shortest duration
+    auto shortestDuration = min_element(durations.begin(), durations.end());
+
+    // Calculate index
+    int fastestNumThreads = distance(durations.begin(), shortestDuration);
+    output_file << "The number of threads with the shortest duration is " << fastestNumThreads << " with " << shortestDuration->count() << " s\n\n";
+
+        // ---
+
+
+    // - bt+elimination+triplets (sequential)
+    printf("doing seq bt + el + tri\n");
+    output_file << "---- Testing sequential backtracking + elimination + triplets ----\n";
+    vector<array<array<int, 9>, 9>> testCasesSeqBtElTri = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesSeqBtElTri) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, 1);  
+        reduceOptionsTriplets(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+    
+    
+    // - bt+elimination+triplets (multithread)
+    printf("doing multi bt + el + tri\n");
+    output_file << "---- Testing multithreaded backtracking + elimination + triplets ----\n";
+    vector<array<array<int, 9>, 9>> testCasesMultiBtElTri = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesMultiBtElTri) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
+        // printf("what\n");
+        reduceOptionsTripletsParallel(allOptions);
+        // printf("getting through\n");
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+
+    // - bt+elimination+triplets+twins (sequential)
+    printf("doing seq bt + el + tri + twin\n");
+    output_file << "---- Testing sequential backtracking + elimination + triplets + twins ----\n";
+    vector<array<array<int, 9>, 9>> testCasesSeqBtElTriTwi = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesSeqBtElTriTwi) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, 1);  
+        reduceOptionsTriplets(allOptions);
+        reduceOptionsTwins(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+
+    
+    // - bt+elimination+triplets+twins (multithread)
+    printf("doing multi bt + el + tri + twin\n");
+    output_file << "---- Testing multithread backtracking + elimination + triplets + twins ----\n";
+    vector<array<array<int, 9>, 9>> testCasesMultiBtElTriTwi = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesMultiBtElTriTwi) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
+        reduceOptionsTripletsParallel(allOptions);
+        reduceOptionsTwinsParallel(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+
+
+        // - bt+elimination+triplets+twins+lone rangers (sequential)
+    printf("doing seq bt + el + tri + twin + lr\n");
+    output_file << "---- Testing sequential backtracking + elimination + triplets + twins + lone rangers ----\n";
+    vector<array<array<int, 9>, 9>> testCasesSeqBtElTriTwiLr = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesSeqBtElTriTwiLr) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, 1);  
+        reduceOptionsTriplets(allOptions);
+        reduceOptionsTwins(allOptions);
+        reduceOptionsLoneRangerSingle(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n";
+
+
+
+        // - bt+elimination+triplets+twins+lone rangers (multithread)
+    printf("doing seq bt + el + tri + twin + lr\n");
+    output_file << "---- Testing multithread backtracking + elimination + triplets + twins + lone rangers ----\n";
+    vector<array<array<int, 9>, 9>> testCasesMultiBtElTriTwiLr = testCases;
+
+    start = chrono::high_resolution_clock::now();
+    for (auto& testCase : testCasesMultiBtElTriTwiLr) {
+        array<array<vector<int>, 9>, 9> allOptions = getOptions(testCase);
+        reduceOptionsElimination(allOptions, testCase, fastestNumThreads);  
+        reduceOptionsTripletsParallel(allOptions);
+        reduceOptionsTwinsParallel(allOptions);
+        reduceOptionsLoneRangerMulti(allOptions);
+        bool x = pureBacktracking(testCase, allOptions);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::duration<double>>(end - start);
+
+    output_file << "Time to solve all sudokus: " << duration.count() << " s\n";
+    output_file << "\n"; 
 }
